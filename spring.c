@@ -12,10 +12,14 @@
 #define FLOOR_Y (HEIGHT*0.6)
 
 #define NUM_SPRING_ELEMENTS 16
-#define SPRING_ELEMENT_LENGTH 40
+#define SPRING_ELEMENT_LENGTH 60
+#define K 20
+#define X_REST (WIDTH/3)
+#define FRICTION 0.5
 
-
-float x_mass;
+float x_mass = WIDTH*0.7;
+float v = 20;
+float a = 2;
 
 typedef struct SpringElement {
     Vector2 start, end;
@@ -60,11 +64,11 @@ void drawMass() {
 }
 
 int main(void) {
+    printf("Mass on Spring, Here we go!\n");
     InitWindow(WIDTH, HEIGHT, "Spring on Mass Simulation");
 
     SetTargetFPS(FPS);
     float dt;
-    float v = 40;
 
     while (!WindowShouldClose()) {
         BeginDrawing();
@@ -72,10 +76,13 @@ int main(void) {
         DrawFPS(10, 10);
         dt = GetFrameTime();
         drawFloor();
+        float friction = a > 0 ? FRICTION : -FRICTION;
+        a = -K * (x_mass-X_REST) - v*FRICTION;
+        v += a * dt;
         x_mass += v * dt;
         drawMass(x_mass);
         drawSpring();
-        DrawText("Spring on Mass Simulating", WIDTH / 10, 100, 30, RED);
+        DrawText("Mass on Spring Simulation", WIDTH / 10, 100, 30, RED);
         EndDrawing();
     }
 
